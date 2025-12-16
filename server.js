@@ -24,7 +24,7 @@ const mongoOptions = {
     socketTimeoutMS: 45000,
 };
 
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/payment-app', mongoOptions)
+mongoose.connect(process.env.MONGO_URI, mongoOptions)
     .then(() => {
         console.log('✅ MongoDB Connected');
         console.log('RESTART CHECK: Code Version 2.0 (Deepmind Update)'); // Added line

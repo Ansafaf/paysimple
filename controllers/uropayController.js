@@ -4,11 +4,18 @@ const crypto = require('crypto');
 exports.createOrder = async (req, res) => {
     try {
         const { name, email, phone } = req.body;
-        const amount = parseFloat(req.body.amount);
-
-        if (!amount || !name) {
-            return res.status(400).send("Name and Amount are required");
+        const rawAmount = Number(req.body.amount);
+        if (isNaN(rawAmount) || rawAmount <= 0) {
+            return res.status(400).send("Invalid amount");
         }
+
+        const formattedAmount = rawAmount.toFixed(2); // string
+
+
+        if (!name || isNaN(rawAmount) || rawAmount <= 0) {
+            return res.status(400).send("Name and valid amount are required");
+        }
+
 
         const apiKey = process.env.URO_API_KEY;
         const secretKey = process.env.UROPAY_SECRET_KEY;
@@ -69,7 +76,7 @@ exports.createOrder = async (req, res) => {
                 // We will reconstruct the link to be a clean P2P transfer request.
                 let finalUpiLink = upiString;
                 try {
-                    const formattedAmount = parseFloat(amount).toFixed(2);
+                    // const formattedAmount = parseFloat(amount).toFixed(2);
 
                     // URL parsing hack: Replace protocol to https to use standard URL API
                     const urlObj = new URL(finalUpiLink.replace('upi://', 'https://'));
@@ -95,7 +102,7 @@ exports.createOrder = async (req, res) => {
                     // Fallback: just ensure amount is correct if parsing failed
                     const formattedAmount = parseFloat(amount).toFixed(2);
                     if (finalUpiLink.includes('&am=')) {
-                        finalUpiLink = finalUpiLink.replace(/&am=[^&]* /, `&am=${formattedAmount}`);
+                        finalUpiLink = finalUpiLink.replace(/&am=[^&]*/, `&am=${formattedAmount}`);
                     } else {
                         finalUpiLink += `&am=${formattedAmount}`;
                     }
@@ -126,7 +133,8 @@ exports.createOrder = async (req, res) => {
                     <body>
                         <div class="card">
                             <h2>Scan or Pay via App</h2>
-                            <div class="amount">₹${amount}</div>
+                            <div class="amount">₹${formattedAmount}</div>
+
                             
                             <!-- QR Code Section -->
                             <div class="qr-container">
