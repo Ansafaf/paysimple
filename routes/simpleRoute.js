@@ -1,14 +1,23 @@
 const express = require("express");
-const Route = express.Router();
-const uropayController = require('../controllers/uropayController');
+const router = express.Router();
+const uropayController = require("../controllers/uropayController");
 
-
-Route.get("/", (req, res) => {
+// Existing routes
+router.get("/", (req, res) => {
     res.render("userInput");
-})
+});
 
-Route.post("/payment", uropayController.createOrder);
-Route.get("/payment/success", uropayController.paymentSuccess);
-Route.get("/payment/cancel", uropayController.paymentCancel);
+router.post("/payment", uropayController.createOrder);
+router.get("/payment/success", uropayController.paymentSuccess);
+router.get("/payment/cancel", uropayController.paymentCancel);
 
-module.exports = Route;
+// 🔔 WEBHOOK ROUTE (POST ONLY)
+router.post(
+    "/payment/webhook/uropay",
+    express.json({ type: "*/*" }), // webhook-safe
+    uropayController.uropayWebhook
+);
+router.get("/payment/status", uropayController.checkPaymentStatus);
+
+
+module.exports = router;
