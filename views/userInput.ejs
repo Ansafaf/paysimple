@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Information</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 450px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #444;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .amount-input {
+            position: relative;
+        }
+
+        .currency-symbol {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 16px;
+            pointer-events: none;
+        }
+
+        .amount-input input {
+            padding-left: 35px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .input-error {
+            border-color: #e74c3c !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Payment Details</h1>
+        <p class="subtitle">Please enter your information to proceed</p>
+
+        <form action="/payment" method="POST" id="paymentForm">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                <span class="error" id="nameError">Please enter your name</span>
+            </div>
+
+            <div class="form-group">
+                <label for="amount">Amount to Pay</label>
+                <div class="amount-input">
+                    <span class="currency-symbol">$</span>
+                    <input type="number" id="amount" name="amount" placeholder="0.00" step="0.01" min="0.01" required>
+                </div>
+                <span class="error" id="amountError">Please enter a valid amount</span>
+            </div>
+
+            <button type="submit" class="btn">Pay Now</button>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('paymentForm');
+        const nameInput = document.getElementById('name');
+        const amountInput = document.getElementById('amount');
+        const nameError = document.getElementById('nameError');
+        const amountError = document.getElementById('amountError');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            let isValid = true;
+
+            // Reset errors
+            nameError.style.display = 'none';
+            amountError.style.display = 'none';
+            nameInput.classList.remove('input-error');
+            amountInput.classList.remove('input-error');
+
+            // Validate name
+            if (nameInput.value.trim() === '') {
+                nameError.style.display = 'block';
+                nameInput.classList.add('input-error');
+                isValid = false;
+            }
+
+            // Validate amount
+            const amount = parseFloat(amountInput.value);
+            if (isNaN(amount) || amount <= 0) {
+                amountError.style.display = 'block';
+                amountInput.classList.add('input-error');
+                isValid = false;
+            }
+
+            if (isValid) {
+                // Form is valid, submit it
+                form.submit();
+            }
+        });
+    </script>
+</body>
+
+</html>
